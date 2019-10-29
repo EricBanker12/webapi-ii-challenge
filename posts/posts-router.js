@@ -44,9 +44,15 @@ router.post('/:id/comments', (req, res) => {
         const comment = {text, post_id, created_at: date, updated_at: date}
 
         db.insertComment(comment)
-        .then(resp => {
+        .then(({id}) => {
             // console.log(resp)
-            res.status(201).json({...comment, ...resp})
+            // res.status(201).json({...comment, ...resp})
+            db.findCommentById(id)
+            .then(resp => {
+                // console.log(resp)
+                const comment = resp[0]
+                res.status(201).json(comment)
+            })
         })
         .catch(err => {
             // console.log(err, Object.keys(err))
