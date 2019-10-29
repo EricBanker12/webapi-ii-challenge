@@ -63,4 +63,19 @@ router.get('/', (req, res) => {
     })
 })
 
+// GET specified post by id
+router.get('/:id', (req, res) => {
+    db.findById(req.params.id)
+    .then(resp => {
+        // console.log(resp)
+        const post = resp[0]
+        if (post) res.json(post)
+        else res.status(404).json({message: "The post with the specified ID does not exist."})
+    })
+    .catch(err => {
+        // console.log(err)
+        res.status(500).json({error: "The post information could not be retrieved."})
+    })
+})
+
 module.exports = router
