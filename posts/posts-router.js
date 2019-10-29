@@ -78,4 +78,35 @@ router.get('/:id', (req, res) => {
     })
 })
 
+// GET array of comments by post id
+router.get('/:id/comments', async (req, res) => {
+    // check if the post exists
+    const post = await db.findById(req.params.id)
+    .then(resp => {
+        // console.log(resp)
+        return resp[0]
+    })
+    .catch(err => {
+        // console.log(err)
+        res.status(500).json({error: "The comments information could not be retrieved."})
+    })
+
+    // cancel and error if post does not exist
+    if (!post) {
+        res.status(404).json({message: "The post with the specified ID does not exist."})
+        return
+    }
+
+    // get comments
+    db.findPostComments(req.params.id)
+    .then(resp => {
+        // console.log(resp)
+        res.json(resp)
+    })
+    .catch(err => {
+        // console.log(err)
+        res.status(500).json({error: "The comments information could not be retrieved."})
+    })
+})
+
 module.exports = router
