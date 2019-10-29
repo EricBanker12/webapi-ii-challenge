@@ -140,4 +140,43 @@ router.delete('/:id', async (req, res) => {
     })
 })
 
+// PUT update a specified post by id
+router.put('/:id', async (req, res) => {
+    const {title, contents} = req.body
+    
+    if (!title || !contents || typeof title != 'string' || typeof contents != 'string') {
+        res.status(400).json({errorMessage: "Please provide title and contents for the post."})
+        return
+    }
+
+    // check if the post exists
+    const post = await db.findById(req.params.id)
+    .then(resp => {
+        // console.log(resp)
+        return resp[0]
+    })
+    .catch(err => {
+        // console.log(err)
+        res.status(500).json({error: "The post information could not be modified."})
+    })
+
+    // cancel and error if post does not exist
+    if (!post) {
+        res.status(404).json({message: "The post with the specified ID does not exist."})
+        return
+    }
+
+    // update post
+    const date = new Date()
+    db.update(req.params.id, {title, contents, updated_at: date})
+    .then(resp => {
+        // console.log(resp)
+        res.json({...post, title, contents, updated_at: date})
+    })
+    .catch(err => {
+        // console.log(err)
+        res.status(500).json({error: "The post information could not be modified."})
+    })
+})
+
 module.exports = router
