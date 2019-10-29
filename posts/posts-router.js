@@ -183,7 +183,13 @@ router.put('/:id', async (req, res) => {
     db.update(req.params.id, {title, contents, updated_at: date})
     .then(resp => {
         // console.log(resp)
-        res.json({...post, title, contents, updated_at: date})
+        // res.json({...post, title, contents, updated_at: date})
+        db.findById(req.params.id)
+        .then(resp => {
+            // console.log(resp)
+            const post = resp[0]
+            res.json(post)
+        })
     })
     .catch(err => {
         // console.log(err)
