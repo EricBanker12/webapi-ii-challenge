@@ -14,9 +14,15 @@ router.post('/', (req, res) => {
         const post = {title, contents, created_at: date, updated_at: date}
 
         db.insert(post)
-        .then(resp => {
+        .then(({id}) => {
             // console.log(resp)
-            res.status(201).json({...post, ...resp})
+            // res.status(201).json({...post, ...resp})
+            db.findById(id)
+            .then(resp => {
+                // console.log(resp)
+                const post = resp[0]
+                res.status(201).json(post)
+            })
         })
         .catch(err => {
             // console.log(err)
